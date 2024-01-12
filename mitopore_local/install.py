@@ -1,3 +1,9 @@
+'''
+#install samtools
+sudo apt install samtools
+sudo apt install bcftools
+sudo apt install curl
+'''
 import os
 
 # download reference 
@@ -12,6 +18,19 @@ os.system('wget https://ftp.ensembl.org/pub/release-110/fasta/caenorhabditis_ele
 os.system('mv *.gz reference')
 os.system('gunzip reference/*.gz')
 print('All reference downloaded successfully')
+
+print('Installing mutserve')
+if not os.path.exists('./tools'):
+    os.mkdir('tools')
+os.chdir('tools')
+os.system('curl -sL mutserve.vercel.app | bash')
+
+print('installing minimap2')
+os.system('git clone https://github.com/lh3/minimap2')
+os.chdir('minimap2')
+os.system('make')
+os.chdir('..')
+os.chdir('..')
 
 
 os.system('')

@@ -16,7 +16,7 @@ def run_minimap2(path='data', organism = 'human', seq_data = 'nanopore'):
     if not os.path.exists('%s/fastq'%path):
         os.mkdir('%s/fastq'%path)
     os.system('mv %s/*.fastq %s/fastq'%(path, path))
-    if os.listdir('%s/fastq') == 0:
+    if os.listdir('%s/fastq'%path) == 0:
         print('No fastq files, please check your fastq data')
     if not os.path.exists('%s/Analysis'%path):
         os.mkdir('%s/Analysis'%path)
@@ -35,12 +35,14 @@ def run_minimap2(path='data', organism = 'human', seq_data = 'nanopore'):
     for fastq_file in os.listdir('%s/fastq/'%(path)):
         path2 = '%s/fastq/%s'%(path, fastq_file)
         fastq_file1 = fastq_file.split('.')[0]
+        with open('%s/Analysis/sample.txt'%path, 'a') as f1:
+            f1.write(fastq_file1+'.bam\n')
         if seq_data == 'nanopore':
-            os.system('minimap2 -t 4 -ax map-ont --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
-            print('minimap2 -t 4 -ax map-ont --secondary=no *** ReferenceData/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+            os.system('tools/minimap2/minimap2 -t 4 -ax map-ont --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+            print('minimap2 -t 4 -ax map-ont --secondary=no *** ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
         elif seq_data == 'pacbio':
-            os.system('minimap2 -t 4 -ax map-pb --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
-            print('minimap2 -t 4 -ax map-pb -uf --secondary=no *** ReferenceData/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+            os.system('tools/minimap2/minimap2 -t 4 -ax map-pb --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+            print('minimap2 -t 4 -ax map-pb -uf --secondary=no *** ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
         elif seq_data =='illumina':
             os.system('bwa mem -K 100000000 -p -v 3 -t 4 -Y ./reference/%s %s |samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
             print('bwa mem -K 100000000 -p -v 3 -t 4 -Y ./reference/%s %s |samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
@@ -87,6 +89,8 @@ def run_mutect2(path='data', organism = 'human'):
     for fastq_file in os.listdir('%s/fastq/'%(path)):
         path2 = '%s/fastq/%s'%(path, fastq_file)
         fastq_file1 = fastq_file.split('.')[0]
+        with open('%s/Analysis/sample.txt'%path, 'a') as f1:
+            f1.write(fastq_file1+'.bam\n')
         # This protocol, we all use bwa-mem as aligner 
         os.system('bwa mem -K 100000000 -p -v 3 -t 4 -Y ./reference/bwa/%s %s|samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
         os.system('./tools/GATK/gatk-4.3.0.0/gatk AddOrReplaceReadGroups -I %s/%s.bam -O %s/%s_addedRG.bam --RGID GT19-38445 --RGLB wgs --RGPL illumina --RGPU GT19-38445 --SORT_ORDER coordinate --CREATE_INDEX true --TMP_DIR /tmp/ --RGSM wgs1'%(path_minimap,fastq_file1, path_minimap, fastq_file1))
@@ -109,40 +113,40 @@ def write_rscript(path='users_file/', s_id = 'Test_name_1618217069/'):
     f.close()
     return
         
-def run_mutserver(organism = 'human'):
+def run_mutserver(path = 'data',organism = 'human'):
     file_org={'human':'rCRS.fasta',
             'rat': 'Rattus_norvegicus.mRatBN7.2.dna.primary_assembly.MT.fa',
             'mouse':'Mus_musculus.GRCm39.dna.chromosome.MT.fa',
             'zebrafish':'Danio_rerio.GRCz11.dna.chromosome.MT.fa',
             'celegans':'Caenorhabditis_elegans.WBcel235.dna.chromosome.MtDNA.fa',
-            'custom': 'custom_ref_%s.fasta'%s_id}
-    os.system('./mutserver/mutserve call users_file/%s/Analysis/Minimap/*.bam --reference /home/ag-rossi/projects/mitopore/mitopore/reference/%s --output users_file/%s/Analysis/Results/result1.vcf --threads 4 --baseQ 10 --level 0.05'%(s_id, file_org[organism] ,s_id))    
-    os.system('bcftools view -S users_file/%s/Analysis/sample.txt users_file/%s/Analysis/Results/result1.vcf > users_file/%s/Analysis/Results/final_output_2percent.vcf --force-samples'%(s_id,s_id,s_id))
-    df = pd.read_csv('users_file/%s/Analysis/Results/final_output_2percent.vcf'%s_id, delimiter='\t', skiprows=11)
+            'custom': 'custom_ref.fasta'}
+    if not os.path.exists('%s/Analysis/Results/'%path):
+        os.mkdir('%s/Analysis/Results/'%path)
+    os.system('./tools/mutserve call %s/Analysis/Minimap/*.bam --reference reference/%s --output %s/Analysis/Results/result1.vcf --threads 4 --baseQ 10 --level 0.05'%(path, file_org[organism] ,path))    
+    os.system('bcftools view -S %s/Analysis/sample.txt %s/Analysis/Results/result1.vcf > %s/Analysis/Results/final_output_2percent.vcf --force-samples'%(path,path,path))
+    df = pd.read_csv('%s/Analysis/Results/final_output_2percent.vcf'%path, delimiter='\t', skiprows=11)
     df = df.drop(['ID', 'QUAL', 'INFO'], axis=1)
-    df.to_html('users_file/%s/Analysis/Results/VCF.html'%s_id)
+    df.to_html('%s/Analysis/Results/VCF.html'%path)
     return
 
-def read_indel(path='users_file/', s_id = 'Test_name_1618217069'):
+def read_indel(path='data'):
     indel_all = pd.DataFrame()
-    for sample1 in os.listdir('%s%s/Analysis/INDEL'%(path, s_id)):
-        indel_df = pd.read_csv('%s%s/Analysis/INDEL/%s'%(path, s_id, sample1), delimiter='\t')
+    for sample1 in os.listdir('%s/Analysis/INDEL'%(path)):
+        indel_df = pd.read_csv('%s%s/Analysis/INDEL/%s'%(path, sample1), delimiter='\t')
         indel_df['ID'] = sample1.split('.')[0][6:]
         indel_all = pd.concat([indel_all, indel_df], ignore_index=True, sort=False)
-    #indel_all = indel_all.drop(['FORMAT', 'SAMPLE', 'F1R2', 'F2R1', 'FAD', 'SB'], axis=1)
-    indel_all.to_html('users_file/%s/Analysis/Results/INDEL.html'%s_id)
+    indel_all.to_html('%s/Analysis/Results/INDEL.html'%path)
 
     return indel_all
 
-def write_json_cgview(path='users_file/', s_id = 'Test_name_1618217069', baseline_cgv = 1000):
+def write_json_cgview(path='data', s_id = 'Test_name_1618217069', baseline_cgv = 1000):
     # For json plots
-    
     my_json = json.load(open('static/JS_library/NZ_mito.json'))
     plot_list = []
     track_list = my_json['cgview']['tracks']
     features_list = my_json['cgview']['features']
     path_depths = 'users_file/%s/Analysis/depths/'%s_id
-    vcf_list = pd.read_csv('users_file/%s/Analysis/Results/result1.txt'%s_id, delimiter='\t')
+    vcf_list = pd.read_csv('%s/Analysis/Results/result1.txt'%path, delimiter='\t')
 
     for fastq_file in os.listdir('users_file/%s/fastq/'%(s_id)):
         fastq_file1 = fastq_file.split('.')[0]
