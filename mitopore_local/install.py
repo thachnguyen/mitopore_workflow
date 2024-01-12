@@ -30,6 +30,9 @@ os.system('git clone https://github.com/lh3/minimap2')
 os.chdir('minimap2')
 os.system('make')
 os.chdir('..')
+
+os.system('wget https://github.com/genepi/haplogrep3/releases/download/v3.2.1/haplogrep3-3.2.1-linux.zip')
+os.system('unzip haplogrep3-3.2.1-linux.zip')
 os.chdir('..')
 
 

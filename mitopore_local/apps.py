@@ -105,10 +105,10 @@ def run_mutect2(path='data', organism = 'human'):
         # dump depth info to json, for CGViewJS part 
     return
 
-def write_rscript(path='users_file/', s_id = 'Test_name_1618217069/'):
-    new_R = 'setwd("/home/ag-rossi/projects/mitopore/mitopore/%s%s")\n'%(path, s_id)
+def write_rscript(path='data'):
+    new_R = 'setwd("%s")\n'%(path)
     new_R += open('R/RNA1.R', 'r').read()
-    f = open(path+s_id+'/Analysis/RNA.R', 'w')
+    f = open(path+'/Analysis/RNA.R', 'w')
     f.write(new_R)
     f.close()
     return
@@ -139,16 +139,16 @@ def read_indel(path='data'):
 
     return indel_all
 
-def write_json_cgview(path='data', s_id = 'Test_name_1618217069', baseline_cgv = 1000):
+def write_json_cgview(path='data', baseline_cgv = 1000):
     # For json plots
     my_json = json.load(open('static/JS_library/NZ_mito.json'))
     plot_list = []
     track_list = my_json['cgview']['tracks']
     features_list = my_json['cgview']['features']
-    path_depths = 'users_file/%s/Analysis/depths/'%s_id
+    path_depths = '%s/Analysis/depths/'%path
     vcf_list = pd.read_csv('%s/Analysis/Results/result1.txt'%path, delimiter='\t')
 
-    for fastq_file in os.listdir('users_file/%s/fastq/'%(s_id)):
+    for fastq_file in os.listdir('%s/fastq/'%(path)):
         fastq_file1 = fastq_file.split('.')[0]
         seq_depth = pd.read_csv('%s%s.txt'%(path_depths, fastq_file1), delimiter='\t', header=None)
         seq_depth_list = {}
@@ -203,9 +203,8 @@ def write_json_cgview(path='data', s_id = 'Test_name_1618217069', baseline_cgv =
     my_json['cgview']['features'] = features_list
     json_str = json.dumps(my_json)
     js_str = 'var NZ_mito = %s'%json_str
-    with open('users_file/%s/Analysis/my_cgview.js'%s_id, 'w') as outfile:
+    with open('%s/Analysis/my_cgview.js'%path, 'w') as outfile:
         outfile.write(js_str)
-
     return
 
 def write_json_cgview_indel(path='users_file/', s_id = 'Test_name_1618217069', baseline_cgv = 1000):
@@ -341,9 +340,9 @@ def write_fastq(record_list, outfile = 'output.fastq'):
             SeqIO.write(read, out_handle, "fastq")
     return
 
-def run_haplogrep3(s_id, vcf_file, tree = 'phylotree-rcrs@17.2', outfile = "haplo.txt"):
-    os.system("./haplogrep3/haplogrep3 classify --in %s --tree %s --out %s --extend-report"%(vcf_file, tree, outfile))
+def run_haplogrep3(path, tree = 'phylotree-rcrs@17.2', outfile = "haplo.txt"):
+    os.system("./tools/haplogrep3 classify --in %s/Analysis/Results/result1.vcf --tree %s --out %s/Analysis/Results/haplogrep3.txt --extend-report"%(path, tree, path))
     df = pd.read_csv(outfile, delimiter='\t')
-    df.to_html('users_file/%s/Analysis/Results/haplogrep.html'%s_id)
+    df.to_html('%s/Analysis/Results/haplogrep.html'%path)
     return
 
