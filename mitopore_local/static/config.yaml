@@ -1,0 +1,10 @@
+Samples:
+  GT19-38445_rev: fastq/GT19-38445_rev.fastq
+  MITOPORE_APPROACH: fastq/MITOPORE_APPROACH.fastq
+  ONT_WGS: fastq/ONT_WGS.fastq
+  PACBIO_WGS: fastq/PACBIO_WGS.fastq
+analyse_protocol: snp_indel
+baseline_cgv: 1000
+name: mitopore
+organism: human
+seq_data: nanopore

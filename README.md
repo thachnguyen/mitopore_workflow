@@ -1,5 +1,6 @@
 # mitopore_workflow
-The local version of mitopore contain analysing functions 
+The local version of mitopore contain analysing functions.
+ 
 Mitopore Term and Conditions
 Mitopore is made available for free to academic researchers under this limited license for non-commercial use. If you plan to use the Mitopore for-profit, you will need to purchase a license. Please contact thach.nguyen@iuf-duesseldorf.de for more information.
 

@@ -11,10 +11,13 @@ def main():
     run_minimap2(path=path)
     run_mutserver(path=path)
     write_json_cgview(path=path)
+    shutil.copyfile('%s/Analysis/my_cgview1.js'%path, '%s/JS_library/my_cgview1.js' %path)
+
     write_rscript(path=path)
     os.system('R < %s/Analysis/RNA.R --no-save'%path)
-    run_haplogrep3(s_id=session_id, vcf_file= 'users_file/%s/Analysis/Results/result1.vcf'%session_id, outfile='users_file/%s/Analysis/Results/haplogrep3.txt'%session_id)
+    run_haplogrep3(path=path)
     copy_tree('static/JS_library/', '%s/JS_library/'%path)
+    shutil.copyfile('templates/report_snv.html', 'users_file/%s/report.html'%session_id)
 
     #Variance calling using mutserve
     

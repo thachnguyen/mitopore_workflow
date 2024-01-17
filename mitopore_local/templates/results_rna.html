@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name ="author" content = "Rossi Lab">
+  <title>Your result</title>
+
+  <!-- Below is used locally but not on server. May generate warnings. -->
+    <!-- Bootstrap CSS -->
+    <link href="/static/JS_library/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/JS_library/prism.css">
+    <!-- <link rel="stylesheet" href="styles/tables.css" /> -->
+    <link rel="stylesheet" href="/static/JS_library/general.css">
+    <script src="/static/JS_library/marked.min.js"></script>
+    <script src="/static/JS_library/gumshoe.min.js"></script>
+    <script src="/static/JS_library/general.js"></script>
+
+    <!-- D3 -->
+    <script src="/static/JS_library/d3.min.js"></script>
+    <!-- CGView -->
+    <script src="/static/JS_library/cgview.min.js"></script>
+    <link rel="stylesheet" href="/static/JS_library/cgview.css">
+    <link rel="stylesheet" href="/static/JS_library/controls.css">
+    <!-- CGView Data -->
+    <script src="/static/results/{{file_id}}/my_cgview.js"></script>
+    <script src="/static/results/{{file_id}}/JS_library/NZ_mito.js"></script>
+
+</head>
+<body>
+  
+    <div id="Text_Buttons">
+
+      <h1>
+        Your mitopore computational results. 
+      </h1>
+      <h2>Sample {{file_id}}.
+      </h2>
+
+      Your mitochondrial analysis is completed, you can download full result here <a href="/static/results/{{file_id}}.zip" download> Download results </a><br>
+      Permanent link: http://localhost:8000/static/results/{{file_id}}.zip
+
+      {% autoescape off %}
+      {{ plot_div }}
+      {% endautoescape %}
+
+    </div>
+
+
+    
+    <!-- <div class="viewer-help">
+      The map below can be moved around by dragging and zoomed by using your
+      touchpad/mouse scroll. The legend colors can be changed by clicking on the
+      swatches. The viewer object for this map can be accessed in your browser
+      JavaScript console as <em>cgv</em>.  Note, that the controls below the map are
+      custom controls created in the tutorial <a href="https://js.cgview.ca/tutorials/tutorial-controls.html">Map
+      Controls</a>.
+      </div> -->
+      <br>
+    <div id="my-viewer1"></div>
+    <div id="my-viewer"></div>
+    <div class="cgv-controls">
+      <div class="cgv-btn" id="btn-reset" title="Reset Map"></div>
+      <div class="cgv-btn" id="btn-zoom-in" title="Zoom In"></div>
+      <div class="cgv-btn" id="btn-zoom-out" title="Zoom Out"></div>
+      <div class="cgv-btn" id="btn-move-left" title="Move Left/Counterclockwise"></div>
+      <div class="cgv-btn" id="btn-move-right" title="Move Right/Clockwise"></div>
+      <div class="cgv-btn" id="btn-toggle-format" title="Toggle Linear/Circular Format"></div>
+      <div class="cgv-btn" id="btn-invert-colors" title="Invert Map Colors"></div>
+      <div class="cgv-btn" id="btn-download" title="Download Map PNG"></div>
+      <div class="cgv-btn" id="btn-toggle-labels" title="Toggle Labels"></div>
+      <div class="cgv-btn" id="btn-animate" title="Start/Stop Animation"></div>
+    </div>
+  
+    <h2>
+      Variance calling summary<br><br>
+      <iframe src="/static/results/{{file_id}}/VCF.html" width="1200" height="1800"
+      frameborder="0" scrolling="yes">  </iframe>
+    </h2>    
+<h2>
+  Read quality<br><br>
+  <iframe src="/static/results/{{file_id}}/read_quality.pdf#toolbar=0" width="650" height="340"
+  frameborder="0" scrolling="no">
+  </iframe>
+</h2>
+
+<h2>
+  Read length<br><br>
+  <iframe src="/static/results/{{file_id}}/read_length.pdf#toolbar=0" width="650" height="340"
+  frameborder="0" scrolling="no">  </iframe>
+</h2>
+
+<h2>
+  Sample summary<br><br>
+  <iframe src="/static/results/{{file_id}}/sample_summary.pdf#toolbar=0" width="650" height="180"
+  frameborder="0" scrolling="no">  </iframe>
+</h2>
+
+<h2>
+  mtDNA_mapping summary<br><br>
+  <iframe src="/static/results/{{file_id}}/cDNA_mapping_summary.pdf#toolbar=0" width="650" height="180"
+  frameborder="0" scrolling="no">  </iframe>
+</h2>
+
+
+
+<script>
+  // Add CGView
+  cgv = new CGV.Viewer('#my-viewer1', {
+    height: 1000,
+    width: 1000
+  });
+  cgv.io.loadJSON(NZ_mito_ref);
+  cgv.draw();
+  cgv = new CGV.Viewer('#my-viewer', {
+    height: 1000,
+    width: 1000
+  });
+  cgv.io.loadJSON(NZ_mito);
+  cgv.draw();
+      // autoResizeMyViewer();
+    </script>
+    <script src="/static/JS_library/controls.js"></script>
+</body>
+
+</html>
+

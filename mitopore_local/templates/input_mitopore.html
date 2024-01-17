@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Webserver for Mitochondria genome analysis. </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      .myDiv {
+        background-image: url("/static/background.jpg"); 
+        text-align: left;
+        font-weight: bold;
+        font-style: oblique;
+      }
+      .myDiv1 {        
+              background-color: rgba(248, 252, 253, 0.884);
+              /* background-image: url("/static/background.jpg");  */
+              /* text-align: left; */
+              /* font-weight: bold; */
+              /* font-style: oblique; */
+            }
+      
+            h1 {
+        text-align: center;
+      }
+      .upLoad {
+        color: rgb(247, 156, 156);
+        font-weight: bold;
+
+      }
+      </style>
+
+      
+        
+</head>
+
+<body>
+  <div id="progressStatus1"></div>  
+<div class="myDiv1"> 
+<h1> MITOPORE: <br>
+  Integrated Web Server for mitochondrial genome analysis </h1>
+{% load static %}
+<h4>Before submission: Please click the ? button below and check the instructions carefully </h4>
+<small class="text-muted" >Our website use Javascript. Please enable Javascript on your browser!</small>
+
+
+<div class="m-4">
+<form id="uploadForm" enctype="multipart/form-data" method=post action="?">
+     {% csrf_token %}
+     <div class="card-header">
+      <h5 id="header_exp_design">
+              Submission Info
+            </h5>
+
+    </div>
+     <div class="row">
+      <div class = "col-sm">
+        <div class="m-3">
+          <label class="form-label" >Name of submission&emsp;&emsp;&emsp;&emsp;&nbsp;</label>
+          {{ form.name}}<button type="button" class="btn btn-secondary btn-sm" onclick="alert('Name of submission, please give only normal English characters')">?</button>
+        </div>
+      </div>
+
+    <div class = "col-sm">
+      <div class="m-3">
+        <label class="form-label" >Upload your Fastq/Bams files (all in zip)&nbsp;&nbsp;</label>
+        <input type="file" name="upfile_fastq" required id="fileInput" accept="application/zip, application/gzip">
+        
+        <!-- {{ form.upfile_fastq}} -->
+        <button type="button" class="btn btn-secondary btn-sm" onclick="alert('Upload you fastq (or BAM file) in a single zip file, your file name should contain only normal English character and do not contain special character such as . &, $, ! ...')">?</button></p>
+      </div>
+      <small class="text-muted" >Each sample must be in single FASTQ/or BAM file, if you have multiple FASTQ, you can use concantenate each subset of FASTQ files using concatenate command in Linux or you can use our <a href="https://mitopore.de/static/concat.html"> concatenate tools.</a> INDEL pipeline only supports zipped FASTQ files</small>
+      <div id="progressBar" style="width: 0%; background-color: rgba(209, 46, 122, 0.52);"></div>
+      <div class="upLoad" id="progressStatus"></div>
+      
+
+      <!-- <small class="text-muted">Presets can be adjusted in Options.</small> -->
+    </div>
+    
+    </div> 
+    
+    <div class="row">
+      <div class = "col-sm">      
+        <div class="m-3">
+        <label class="form-label" >Type of Analysis&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;</label>
+        {{ form.analyse_protocol}}<button type="button" class="btn btn-secondary btn-sm" onclick="alert('The main workflow is SNP calling, Mitopore can do Indel calling but in a limited mode')">?</button>
+      </div></div>
+      <div class = "col-sm"> 
+        <div class="m-3">
+          <label class="form-label" >Sequencing Data&emsp;&emsp;&emsp;&emsp; &emsp;&nbsp; </label>
+          {{ form.seq_data}}<button type="button" class="btn btn-secondary btn-sm" onclick="alert('Mitopore main stream support nanopore data, however our webserver can analyse data from other platforms')">?</button>
+        </div>
+      </div> 
+    </div>
+  
+    <div class="row">
+      <div class = "col-sm">
+        <div class="m-3">
+          <label class="form-label" >Email address &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; </label>
+         {{ form.email_address}}<button type="button" class="btn btn-secondary btn-sm" onclick="alert('After submitting data, you will receive an confirmation email and after computational task completed, you will receive another email contains download link. Please check your spam folder also')">?</button>
+        </div>
+      </div>
+      
+      <div class = "col-sm">
+        <div class="m-3">
+          <label class="form-label" >Genome&emsp;&emsp;&emsp;&emsp; &emsp;&nbsp;&emsp;&emsp; &emsp;&ensp;&nbsp; </label>
+          {{ form.reference_genes}}<button type="button" class="btn btn-secondary btn-sm" onclick="alert('Supported Organism, you can use your customized referene but in a limited mode without annotation')">?</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card-header">
+      <h5 id="header_exp_design">
+              Customized /optional parameters
+            </h5>
+
+    </div>
+    <div class="m-3">
+      <label class="form-label" >Haplotree &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; &nbsp;&nbsp;</label>
+      {{ form.haplo_tree}}
+    </div>
+    <div class="m-3">
+      <label class="form-label" >Variance threshold (%)&emsp;&emsp;&emsp;&nbsp;</label>
+      {{ form.variance_threshold}}<button type="button" class="btn btn-secondary btn-sm"  onclick="alert('You can change variance threshold for variance calling')">?</button>
+    </div>
+
+    <div class="m-3">
+      <label class="form-label" >Load genome sequence file<br> (Optional)&emsp;&emsp;&emsp;&emsp;&emsp; &emsp;&emsp; &emsp;&ensp; </label>
+      {{ form.customized_ref}}
+    </div>
+
+    <div class="m-3">
+      <label class="form-label" ><p>Minimum sequence depth<br> (optional for baseline plot)&emsp;&nbsp;&nbsp; </label>
+      {{ form.seq_depth_baseline}}<button type="button" class="btn btn-secondary btn-sm"  onclick="alert('You can change this baseline for CGV plot, region which has coverage lower than this value will be highlighted in red')">?</button>
+    </div>
+    
+    <!-- {{ form.captcha }}  -->
+
+    <input type="submit" class="btn btn-primary btn-lg btn-block mb-3" value="Submit">
+    <small class="text-muted" >After clicking submit button, please keep the window open until the file is fully uploaded.</small>
+</form>
+<h6>No dataset, no problem, Look into <a href="https://www.dropbox.com/scl/fo/2j3kocrrkllwgjhf4vgsy/h?rlkey=waq8q9asa04qzi6v7ps3ybvav&dl=0">our test data.</a> </h6> 
+</div>
+
+<p>(*) Upon clicking the submit button, I consent to using Mitopore.de in compliance with the <a href="https://mitopore.de/static/README.md">End User License Agreement (EULA)</a> Terms and Conditions. Mitopore.de may contact me via email to notify me about computational results. Kindly keep this window open after submitting your data to view the computational results in your email.</p>
+
+<!-- {% if output %}<h3>{{ output }}</h3>{% endif %} -->
+<br>
+<br>
+<p class="text-center"> 
+
+<div class="siteFooterBar">
+  <div class="content">
+    <h6>Genome Engineering and Model Development lab (GEMD)</h6>
+    <h5>AG Rossi</h5>
+    <h6>IUF - Leibniz Research Institute for Environmental Medicine</h6>
+<div>Auf'm Hennekamp 50</div>
+<div>D-40225 Düsseldorf</div>
+  </p>
+      <span style="float:left;">
+      <div class="foot">2023 © All rights reserved.</div>
+  </div>
+  
+</div>
+
+</div>
+
+  </div>
+    </div>
+    </div>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+function validateEmail() {
+    var emailInput = document.getElementById('id_email_address').value;
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (emailRegex.test(emailInput)) {
+    } else {
+      alert('Invalid email address. Please enter a valid email.');
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  document.getElementById("uploadForm").addEventListener("submit", function(event) {
+    validateEmail()
+    var fileInput = document.getElementById("fileInput");
+    var file = fileInput.files[0];
+    
+    // Validate file type
+    var fileType = file.type;
+    if (fileType !== "application/zip") {
+      alert("This filetype is not support, Please upload a single ZIP file.");
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    
+    // Validate file size (in bytes)
+    var maxSize = 1024 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      alert("File size exceeds the maximum limit (1 GB).");
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+  });
+
+  $(document).ready(function () {
+            $('#uploadForm').on('submit', function (event) {
+                event.preventDefault();
+                var form = $(this);
+                var formData = new FormData(form[0]);
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var percent = Math.round((e.loaded / e.total) * 100);
+                                $('#progressBar').css('width', percent + '%');
+                                $('#progressStatus').text('Uploading: ' +percent + '% uploaded (PLEASE DO NOT ClOSE YOUR BROWSER! A new window will popup when it is done!!!)');
+                            }
+                        });
+                        return xhr;
+                    },
+                    success: function () {
+                        // $('#progressStatus1').text('Your mitochondrial DNA analysis is running.\n\n. You will receive an email when the analysis is complete (may take several hours).\n\n\nPlease check your spam folder.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
+                        alert('Submission completed.\nYou can close this window now.\nYour mitochondrial DNA analysis is running.\nYou will receive an email when the analysis is complete (may take several hours).\nPlease check your spam folder.');
+                        $('#file').val(''); // Clear the file input field
+                    },
+                    error: function (xhr) {
+                        alert('Error: ' + xhr.statusText);
+                    }
+                });
+            });
+        });
+
+
+
+  </script>
+
+
+
+
+
+
+</html>
+

@@ -1,0 +1,18 @@
+Samples:
+    - "barcode05":   # this is a group
+        E1: "fastq/barcode05.fastq.gz"    # filename pairs must be maintained - identifier and filename
+
+    - "barcode06":  # this is another group - names are arbitrary but must be unique
+        F1: "fastq/barcode06.fastq.gz"
+
+    - "barcode07":   # this is a group
+        G1: "fastq/barcode07.fastq.gz"    # filename pairs must be maintained - identifier and filename
+
+    - "barcode08":  # this is another group - names are arbitrary but must be unique
+        H1: "fastq/barcode08.fastq.gz"
+
+    - "barcode09":  # this is another group - names are arbitrary but must be unique
+        I1: "fastq/barcode09.fastq.gz"
+
+    - "barcode11":  # this is another group - names are arbitrary but must be unique
+        K1: "fastq/barcode11.fastq.gz"

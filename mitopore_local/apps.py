@@ -5,6 +5,55 @@ import os
 import pandas as pd
 import json
 import shutil
+import yaml
+
+def create_yaml(path, samples, yaml_file = 'config.yaml'):
+    # '''
+    # Create the user defined YAML from YAML template for RScript. The fastq files are separate into different groups as subfolders. Named by directory's name and file'sname.
+    # Create auxilary file for mutserver
+    # '''   
+    with open(yaml_file) as file:
+        default_config = yaml.load(file, Loader=yaml.FullLoader)
+    with open('static/config.yaml') as file1:
+        default_config1 = yaml.load(file1, Loader=yaml.FullLoader)
+
+    default_config['Samples'] = samples
+    default_config["organism"] = default_config1["organism"]
+    default_config["seq_data"]=default_config1["seq_data"]
+    default_config["name"]=default_config1["name"]
+    default_config["baseline_cgv"]=default_config1["baseline_cgv"]
+    with open('%s/config.yaml'%path, 'w') as f:
+        yaml.dump(default_config, f)
+    return
+
+def manage_fastq_list(path):
+    '''
+    Read user upload files in zip format and return the list of fastq entries for later process, pass it in to YAML file
+    Run Quality control
+    If BAM files uploaded, skip alignment step
+    '''
+    samples_data = os.listdir(path+'/fastq')
+    # accept fastq and fastq.gz, bams only
+    sample_1 = []
+    for sample in samples_data:
+        if sample[-5:] == 'fastq':
+            sample_1.append(sample)
+        elif sample[-8:]== 'fastq.gz':
+            os.system('gunzip %s/fastq/%s'%(path,sample))
+            sample_1.append(sample[:-3])
+        elif sample[-3:]== 'bam':
+            sample_1.append(sample)
+        else:
+            if os.path.isfile('%s/fastq/%s'%(path, sample)):
+                os.remove('%s/fastq/%s'%(path, sample))
+            else:
+                shutil.rmtree('%s/fastq/%s'%(path, sample))
+    samples_data = sample_1
+    group1 = {}
+    for i, each_file in enumerate(samples_data):
+        group1[each_file.split('.')[0]] = 'fastq/%s'%each_file
+
+    return group1
 
 def run_minimap2(path='data', organism = 'human', seq_data = 'nanopore'):
     file_org={'human':'Homo_sapiens.GRCh38.dna.chromosome.MT.fa',
@@ -31,7 +80,8 @@ def run_minimap2(path='data', organism = 'human', seq_data = 'nanopore'):
     path_depths = '%s/Analysis/depths/'%path
     if not os.path.exists(path_depths):
         os.mkdir(path_depths)
-
+    with open('%s/Analysis/sample.txt'%path, 'w') as f1:
+        f1.write('')
     for fastq_file in os.listdir('%s/fastq/'%(path)):
         path2 = '%s/fastq/%s'%(path, fastq_file)
         fastq_file1 = fastq_file.split('.')[0]
@@ -106,7 +156,8 @@ def run_mutect2(path='data', organism = 'human'):
     return
 
 def write_rscript(path='data'):
-    new_R = 'setwd("%s")\n'%(path)
+    current_dir = os.getcwd()
+    new_R = 'setwd("%s")\nref_dir<-"%s"\n'%(path, current_dir)
     new_R += open('R/RNA1.R', 'r').read()
     f = open(path+'/Analysis/RNA.R', 'w')
     f.write(new_R)
@@ -122,7 +173,10 @@ def run_mutserver(path = 'data',organism = 'human'):
             'custom': 'custom_ref.fasta'}
     if not os.path.exists('%s/Analysis/Results/'%path):
         os.mkdir('%s/Analysis/Results/'%path)
-    os.system('./tools/mutserve call %s/Analysis/Minimap/*.bam --reference reference/%s --output %s/Analysis/Results/result1.vcf --threads 4 --baseQ 10 --level 0.05'%(path, file_org[organism] ,path))    
+    os.system('./tools/mutserve call %s/Analysis/Minimap/*.bam --reference reference/%s --output result1.vcf --threads 4 --baseQ 10 --level 0.05'%(path, file_org[organism]))    
+    os.system('mv result1.vcf %s/Analysis/Results/'%path)
+    os.system('mv result1.txt %s/Analysis/Results/'%path)
+
     os.system('bcftools view -S %s/Analysis/sample.txt %s/Analysis/Results/result1.vcf > %s/Analysis/Results/final_output_2percent.vcf --force-samples'%(path,path,path))
     df = pd.read_csv('%s/Analysis/Results/final_output_2percent.vcf'%path, delimiter='\t', skiprows=11)
     df = df.drop(['ID', 'QUAL', 'INFO'], axis=1)
@@ -341,7 +395,7 @@ def write_fastq(record_list, outfile = 'output.fastq'):
     return
 
 def run_haplogrep3(path, tree = 'phylotree-rcrs@17.2', outfile = "haplo.txt"):
-    os.system("./tools/haplogrep3 classify --in %s/Analysis/Results/result1.vcf --tree %s --out %s/Analysis/Results/haplogrep3.txt --extend-report"%(path, tree, path))
+    os.system("./tools/haplogrep3 classify --in %s/Analysis/Results/result1.vcf --tree %s --out %s --extend-report"%(path, tree, outfile))
     df = pd.read_csv(outfile, delimiter='\t')
     df.to_html('%s/Analysis/Results/haplogrep.html'%path)
     return

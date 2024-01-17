@@ -32,7 +32,7 @@ coverage_filter <- function(df) {
       VariantLevel <= 1 & VariantLevel >0.8 & Coverage < 84 ~ "cov_out84",
       TRUE ~ "in"))
 }
-rCRS <- read_file("/home/ag-rossi/projects/mitopore/mitopore/reference/rCRS.fasta") %>% 
+rCRS <- read_file(paste0(ref_dir,"/reference/rCRS.fasta")) %>% 
   unlist() %>% 
   str_remove("chrM") %>%
   str_remove(">") %>%
@@ -51,20 +51,20 @@ vcf_file <- read_delim("Analysis/Results/result1.txt") %>%
   dplyr::filter(!Pos %in% mitopore_blacklist, !Filter == "STRAND_BIAS") %>%
   dplyr::filter(coverage_filter == "in")
 
-disease_df <- readxl::read_xlsx("/home/ag-rossi/projects/mitopore/mitopore/static/Lists MITOMAP/MutationsCodingControl.xlsx", skip = 1) %>% 
+disease_df <- readxl::read_xlsx(paste0(ref_dir,"/static/Lists MITOMAP/MutationsCodingControl.xlsx"), skip = 1) %>% 
   dplyr::select(Position, `Plasmy Reports(Homo/Hetero)`, NucleotideChange, Disease) %>%
   separate(NucleotideChange, into = c("REF", "ALT"), sep = "-") %>%
   separate(`Plasmy Reports(Homo/Hetero)`, into = c("Homoplasmy", "Heteroplasmy"), sep = "/") %>%
   mutate(POS = Position, DiseaseStatus = Disease) %>%
   dplyr::select(-Position, -Disease)
 
-rtRNA_df <- readxl::read_xlsx("/home/ag-rossi/projects/mitopore/mitopore/static/Lists MITOMAP/MutationsRNA MITOMAP Foswiki.xlsx", skip = 1) %>% 
+rtRNA_df <- readxl::read_xlsx(paste0(ref_dir,"/static/Lists MITOMAP/MutationsRNA MITOMAP Foswiki.xlsx"), skip = 1) %>% 
   dplyr::select(Position, Allele, Disease, Status, Homoplasmy, Heteroplasmy) %>%
   separate(Allele, into = c("REF", "ALT"), sep = "\\d+") %>%
   mutate(POS = Position, DiseaseStatus_tr = Disease) %>%
   dplyr::select(-Position, -Disease)
 
-poly_df <- readxl::read_xlsx("/home/ag-rossi/projects/mitopore/mitopore/static/Lists MITOMAP/Polymorphisms MITOMAP Foswiki.xlsx") %>% 
+poly_df <- readxl::read_xlsx(paste0(ref_dir,"/static/Lists MITOMAP/Polymorphisms MITOMAP Foswiki.xlsx")) %>% 
   dplyr::select(pos, ref, alt, aachange) %>%
   mutate(POS = pos, REF = ref, ALT = alt, `Status` = "polymorphism") %>%
   dplyr::select(-pos, -ref, -alt)

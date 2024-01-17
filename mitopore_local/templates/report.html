@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name ="author" content = "Rossi Lab">
+  <title>Your result</title>
+
+  <!-- Below is used locally but not on server. May generate warnings. -->
+    <!-- Bootstrap CSS -->
+    <link href="JS_library/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="JS_library/prism.css">
+    <!-- <link rel="stylesheet" href="styles/tables.css" /> -->
+    <link rel="stylesheet" href="JS_library/general.css">
+    <script src="JS_library/marked.min.js"></script>
+    <script src="JS_library/gumshoe.min.js"></script>
+    <script src="JS_library/general.js"></script>
+
+    <!-- D3 -->
+    <script src="JS_library/d3.min.js"></script>
+    <!-- CGView -->
+    <script src="JS_library/cgview.min.js"></script>
+    <link rel="stylesheet" href="JS_library/cgview.css">
+    <link rel="stylesheet" href="JS_library/controls.css">
+    <!-- CGView Daya -->
+    <script src="JS_library/my_cgview.js"></script>
+    <script src="JS_library/my_cgview1.js"></script>
+    <script src="JS_library/NZ_mito.js"></script>
+
+</head>
+<body>
+  
+    <div id="Text_Buttons">
+
+      <h1>
+        Your mitopore computational results. 
+      </h1>
+      <h2>Sample.
+      </h2>
+
+      Your mitochondrial analysis is completed<br>
+      The report contains several fields, you can open the original results/graph <a href=".">in this folder</a><br>
+      <h2>
+        CGView SNV plot
+      </h2>
+        <small class="text-muted">You can easily view your SNV result and coverage track, or you can switch to linear view by toogle Circular/linear format  <br><br>
+        </small>
+      <!-- , you can download full result here <a href="/static/results/{{file_id}}.zip" download> Download results </a><br> -->
+
+      <!-- {% autoescape off %}
+      {{ plot_div }}
+      {% endautoescape %} -->
+
+    </div>
+    <!-- <div class="viewer-help">
+      The map below can be moved around by dragging and zoomed by using your
+      touchpad/mouse scroll. The legend colors can be changed by clicking on the
+      swatches. The viewer object for this map can be accessed in your browser
+      JavaScript console as <em>cgv</em>.  Note, that the controls below the map are
+      custom controls created in the tutorial <a href="https://js.cgview.ca/tutorials/tutorial-controls.html">Map
+      Controls</a>.
+      </div> -->
+      <!-- <div id="my-viewer1"></div> -->
+    <div id="my-viewer"></div>
+    <div class="cgv-controls">
+      <div class="cgv-btn" id="btn-reset" title="Reset Map"></div>
+      <div class="cgv-btn" id="btn-zoom-in" title="Zoom In"></div>
+      <div class="cgv-btn" id="btn-zoom-out" title="Zoom Out"></div>
+      <div class="cgv-btn" id="btn-move-left" title="Move Left/Counterclockwise"></div>
+      <div class="cgv-btn" id="btn-move-right" title="Move Right/Clockwise"></div>
+      <div class="cgv-btn" id="btn-toggle-format" title="Toggle Linear/Circular Format"></div>
+      <div class="cgv-btn" id="btn-invert-colors" title="Invert Map Colors"></div>
+      <div class="cgv-btn" id="btn-download" title="Download Map PNG"></div>
+      <div class="cgv-btn" id="btn-toggle-labels" title="Toggle Labels"></div>
+      <div class="cgv-btn" id="btn-animate" title="Start/Stop Animation"></div>
+    </div> 
+
+    <h2>
+      CGView INDEL plot
+      <small class="text-muted">You can easily view your INDEL result and coverage track, or you can switch to linear view by toogle Circular/linear format  <br><br>
+      </small>
+    <!-- , you can download full result here <a href="/static/results/{{file_id}}.zip" download> Download results </a><br> -->
+
+    <!-- {% autoescape off %}
+    {{ plot_div }}
+    {% endautoescape %} -->
+
+  </div>
+  <!-- <div class="viewer-help">
+    The map below can be moved around by dragging and zoomed by using your
+    touchpad/mouse scroll. The legend colors can be changed by clicking on the
+    swatches. The viewer object for this map can be accessed in your browser
+    JavaScript console as <em>cgv</em>.  Note, that the controls below the map are
+    custom controls created in the tutorial <a href="https://js.cgview.ca/tutorials/tutorial-controls.html">Map
+    Controls</a>.
+    </div> -->
+    <!-- <div id="my-viewer1"></div> -->
+  <div id="my-viewer1"></div>
+  <div class="cgv-controls">
+    <div class="cgv-btn" id="btn-reset" title="Reset Map"></div>
+    <div class="cgv-btn" id="btn-zoom-in" title="Zoom In"></div>
+    <div class="cgv-btn" id="btn-zoom-out" title="Zoom Out"></div>
+    <div class="cgv-btn" id="btn-move-left" title="Move Left/Counterclockwise"></div>
+    <div class="cgv-btn" id="btn-move-right" title="Move Right/Clockwise"></div>
+    <div class="cgv-btn" id="btn-toggle-format" title="Toggle Linear/Circular Format"></div>
+    <div class="cgv-btn" id="btn-invert-colors" title="Invert Map Colors"></div>
+    <div class="cgv-btn" id="btn-download" title="Download Map PNG"></div>
+    <div class="cgv-btn" id="btn-toggle-labels" title="Toggle Labels"></div>
+    <div class="cgv-btn" id="btn-animate" title="Start/Stop Animation"></div>
+  </div> 
+
+  <h2>
+    Variance calling summary
+  </h2>
+    <small class="text-muted">POS: Position in the mitochondrial genome; REF: Nucleotide in the reference sequence; ALT: Alternating nucleotide detected in the sample; GT: Genotype. 0 = Wildtype; 1, 2, 3 … = Different variants detected starting with the highest to the lowest frequency. AF: Allele Frequency. The level of each genotype other than wildtype in fractions of 0–1; DP: Depth: read depth at the indicated position.
+    </small><br>
+
+    <a href="Analysis/Results/">Click to open original result</a><br>
+    <iframe src="Analysis/Results/VCF.html" width="1200" height="1800"
+    frameborder="0" scrolling="yes">  </iframe>
+  </h2>
+  <h2>
+    Indel calling summary
+  </h2>
+  <p>When you select the INDEL workflow (beta version), you can see the each INDEL VCF file in Analysis/INDEL folder.
+  <p></p>  <a href="Analysis/INDEL/">Click to open INDEL result</a><br>
+  <iframe src="Analysis/Results/INDEL.html" width="1200" height="400"
+  frameborder="0" scrolling="yes">  </iframe>
+
+  <h2>
+    Variance calling summary & MITOMAP 
+  </h2>
+  <small class="text-muted">Detected variants are annotated according to their status in the MITOMAP <a href="https://www.mitomap.org/MITOMAP">www.mitomap.org/</a> database. Variants annotated as “polymorphism” (green) are non-suspicious, while variants annotated as “no polymorphism” (red) are potentially detrimental and warrant further inspection.
+  </small> <br>
+    <p> <a href="Results/">Click to open the result</a><br>
+    <img src="Results/mitomap.png" style="width: 50%;">
+  
+  <h2>
+    Variance Landscape
+  </h2>
+    <small class="text-muted">Variant Landscape plot visualizes scaled heteroplasmy levels (from low to high) for analyzed samples, indicating sample relationships.    </small><br>
+    <p></p><a href="Analysis/Results/">Click to open the result</a><br>
+    <iframe src="Analysis/Results/variant_landscape.pdf" width="50%" height="700"></iframe>
+  <h2>
+    Disease Table
+  </h2>
+  <p>You can see the disease table file in Analysis/Result/ folder. <a href="Analysis/Results/">Click to open the result</a><br>
+  
+  
+  <h2>
+    Haplogrep results
+  </h2>
+  <a href="Analysis/Results/">Click to open the result</a><br>
+  <iframe src="Analysis/Results/haplogrep.html" width="1200" height="300"
+  frameborder="0" scrolling="yes">  </iframe>
+
+<h2>
+Read quality
+</h2>
+<a href="Results/QC/">Click to open the result</a><br>
+<img src="Results/QC/read_quality.png" style="width: 50%;">
+
+
+
+<h2>
+Read length
+</h2>
+<a href="Results/QC/">Click to open the result</a><br>
+<img src="Results/QC/read_length.png" style="width: 50%;" height="300">
+
+<h2>
+Sample summary
+</h2>
+<a href="Results/QC/">Click to open the result</a><br>
+<iframe src="Results/QC/sample_summary.html" style="width: 50%;" height="350"
+frameborder="0" scrolling="yes">  </iframe>
+
+
+
+<h2>
+mtDNA_mapping summary
+</h2>
+<a href="Results/QC/">Click to open the result</a><br>
+<iframe src="Results/QC/mtDNA_mapping_summary.html" style="width: 50%;" height="350"
+frameborder="0" scrolling="yes">  </iframe>
+
+<h2>
+Note for large deletions
+</h2>
+<small class="text-muted"> Please consult the <a href="Analysis/Results/deletion_plots.pdf">large deletion plots</a> for further information. Possible experimental reasons for low coverage are e.g. non-uniform coverage (consult PCR products) or bad quality of library preparation
+</small><br>
+
+<iframe src="Analysis/Results/large_deletions.txt" style="width: 50%;"
+frameborder="0" scrolling="yes">  </iframe>
+
+
+
+
+<script>
+  cgv = new CGV.Viewer('#my-viewer', {
+    height: 1000,
+    width: 1000
+  });
+  cgv.io.loadJSON(NZ_mito);
+  cgv.draw();
+  cgv = new CGV.Viewer('#my-viewer1', {
+    height: 1000,
+    width: 1000
+  });
+  cgv.io.loadJSON(NZ_mito1);
+  cgv.draw();
+      // autoResizeMyViewer();
+    </script>
+    <script src="JS_library/controls.js"></script>
+</body>
+
+</html>
+
