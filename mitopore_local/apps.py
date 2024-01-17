@@ -6,6 +6,7 @@ import pandas as pd
 import json
 import shutil
 import yaml
+from Bio import SeqIO
 
 def create_yaml(path, samples, yaml_file = 'config.yaml'):
     # '''
@@ -323,8 +324,6 @@ def write_json_cgview_indel(path='users_file/', s_id = 'Test_name_1618217069', b
 
     return
 
-
-from Bio import SeqIO
 
 def select_subset(seq_record, min_length = 50, min_quality = 6):
     """_summary_ transform seq record into smaller segment which has higher quality than min_quality

@@ -21,16 +21,18 @@ mitopore_workflow has two pipelines
 ```console
 python mitopore_snv.py testdata_directory_path 
 ```
-##### INDEL calling
+##### INDEL calling (Beta version)
 ```console
 python mitopore_indel.py testdata_directory_path 
 ```
+##### Results
+The result is summary in a single HTML file report.html in your testdata_directory. Other supplementary result files (graphical plots, BAM alignment files, coverage and mapping reports ...)are in Results folder and Analysis folder.
+
+
 ### System requirement
-#### System requirement
     * CPU: 2.0 GHz (64bits) 2 cores or higher
     * Memory: 24 GB or higher
     * Diskdrive: 100 GB free space 
     * Linux (64 bits) or MacOS.
-
 ### Dependancies
-All dependancies package are described in install.py files
+All dependant packages are described in install.py files

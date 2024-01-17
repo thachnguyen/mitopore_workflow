@@ -1,11 +1,12 @@
-'''
-#install samtools
-sudo apt install samtools
-sudo apt install bcftools
-sudo apt install curl
-'''
 import os
 import shutil
+
+#install samtools
+os.system('sudo apt install samtools')
+os.system('sudo apt install bcftools')
+os.system('sudo apt install curl')
+os.system('sudo apt install python3-pip')
+os.system('pip install -r requirements.txt')
 
 # download reference 
 if not os.path.exists('./reference'):
@@ -52,8 +53,6 @@ print('bwa indexing reference')
 os.system('./tools/bwa/bwa index reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
 os.system('samtools faidx reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
 os.system('./tools/gatk-4.5.0.0/gatk CreateSequenceDictionary -R reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
-
-
 
 
 # os.system('')
