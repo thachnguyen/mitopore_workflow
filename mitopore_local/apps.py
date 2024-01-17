@@ -14,14 +14,10 @@ def create_yaml(path, samples, yaml_file = 'config.yaml'):
     # '''   
     with open(yaml_file) as file:
         default_config = yaml.load(file, Loader=yaml.FullLoader)
-    with open('static/config.yaml') as file1:
-        default_config1 = yaml.load(file1, Loader=yaml.FullLoader)
+    # with open('static/config.yaml') as file1:
+    #     default_config1 = yaml.load(file1, Loader=yaml.FullLoader)
 
     default_config['Samples'] = samples
-    default_config["organism"] = default_config1["organism"]
-    default_config["seq_data"]=default_config1["seq_data"]
-    default_config["name"]=default_config1["name"]
-    default_config["baseline_cgv"]=default_config1["baseline_cgv"]
     with open('%s/config.yaml'%path, 'w') as f:
         yaml.dump(default_config, f)
     return
@@ -113,10 +109,7 @@ def run_mutect2(path='data', organism = 'human'):
                 'celegans':'Caenorhabditis_elegans.WBcel235.dna.chromosome.MtDNA.fa',
                 'custom': 'custom_ref.fasta'}
 
-    if not os.path.exists('%s/fastq'%path):
-        os.mkdir('%s/fastq'%path)
-    os.system('mv %s/*.fastq %s/fastq'%(path, path))
-    if os.listdir('%s/fastq') == 0:
+    if os.listdir('%s/fastq'%path) == 0:
         print('No fastq files, please check your fastq data')
     if not os.path.exists('%s/Analysis'%path):
         os.mkdir('%s/Analysis'%path)
@@ -136,15 +129,15 @@ def run_mutect2(path='data', organism = 'human'):
     if not os.path.exists(path_mutect):
         os.mkdir(path_mutect)
 
-    for fastq_file in os.listdir('%s/fastq/'%(path)):
-        path2 = '%s/fastq/%s'%(path, fastq_file)
+    for fastq_file in os.listdir('%s/fastq_fil/'%(path)):
+        path2 = '%s/fastq_fil/%s'%(path, fastq_file)
         fastq_file1 = fastq_file.split('.')[0]
         with open('%s/Analysis/sample.txt'%path, 'a') as f1:
             f1.write(fastq_file1+'.bam\n')
         # This protocol, we all use bwa-mem as aligner 
-        os.system('bwa mem -K 100000000 -p -v 3 -t 4 -Y ./reference/bwa/%s %s|samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
-        os.system('./tools/GATK/gatk-4.3.0.0/gatk AddOrReplaceReadGroups -I %s/%s.bam -O %s/%s_addedRG.bam --RGID GT19-38445 --RGLB wgs --RGPL illumina --RGPU GT19-38445 --SORT_ORDER coordinate --CREATE_INDEX true --TMP_DIR /tmp/ --RGSM wgs1'%(path_minimap,fastq_file1, path_minimap, fastq_file1))
-        os.system('./tools/GATK/gatk-4.3.0.0/gatk Mutect2 -R /home/ag-rossi/ReferenceData/Homo_sapiens.GRCh38.dna.chromosome.chrM.fa --mitochondria-mode -I %s/%s_addedRG.bam -O %s/INDEL_%s.vcf'%(path_minimap, fastq_file1, path_minimap,fastq_file1))
+        os.system('./tools/bwa/bwa mem -K 100000000 -p -v 3 -t 4 -Y reference/bwa/%s %s|samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+        os.system('./tools/gatk-4.5.0.0/gatk AddOrReplaceReadGroups -I %s/%s.bam -O %s/%s_addedRG.bam --RGID GT19-38445 --RGLB wgs --RGPL illumina --RGPU GT19-38445 --SORT_ORDER coordinate --CREATE_INDEX true --TMP_DIR /tmp/ --RGSM wgs1'%(path_minimap,fastq_file1, path_minimap, fastq_file1))
+        os.system('./tools/gatk-4.5.0.0/gatk Mutect2 -R reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa --mitochondria-mode -I %s/%s_addedRG.bam -O %s/INDEL_%s.vcf'%(path_minimap, fastq_file1, path_minimap,fastq_file1))
         os.unlink('%s/%s_addedRG.bam'%(path_minimap, fastq_file1))
         os.unlink('%s/%s_addedRG.bai'%(path_minimap, fastq_file1))
         shutil.copyfile('%s/INDEL_%s.vcf'%(path_minimap,fastq_file1), '%sINDEL_%s.vcf'%(path_mutect,fastq_file1))
@@ -164,7 +157,7 @@ def write_rscript(path='data'):
     f.close()
     return
         
-def run_mutserver(path = 'data',organism = 'human'):
+def run_mutserver(path = 'data',organism = 'human', thres = '0.05'):
     file_org={'human':'rCRS.fasta',
             'rat': 'Rattus_norvegicus.mRatBN7.2.dna.primary_assembly.MT.fa',
             'mouse':'Mus_musculus.GRCm39.dna.chromosome.MT.fa',
@@ -173,7 +166,7 @@ def run_mutserver(path = 'data',organism = 'human'):
             'custom': 'custom_ref.fasta'}
     if not os.path.exists('%s/Analysis/Results/'%path):
         os.mkdir('%s/Analysis/Results/'%path)
-    os.system('./tools/mutserve call %s/Analysis/Minimap/*.bam --reference reference/%s --output result1.vcf --threads 4 --baseQ 10 --level 0.05'%(path, file_org[organism]))    
+    os.system('./tools/mutserve call %s/Analysis/Minimap/*.bam --reference reference/%s --output result1.vcf --threads 4 --baseQ 10 --level %s'%(path, file_org[organism], thres))    
     os.system('mv result1.vcf %s/Analysis/Results/'%path)
     os.system('mv result1.txt %s/Analysis/Results/'%path)
 

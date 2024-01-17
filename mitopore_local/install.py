@@ -5,6 +5,7 @@ sudo apt install bcftools
 sudo apt install curl
 '''
 import os
+import shutil
 
 # download reference 
 if not os.path.exists('./reference'):
@@ -18,11 +19,17 @@ os.system('wget https://ftp.ensembl.org/pub/release-110/fasta/caenorhabditis_ele
 os.system('mv *.gz reference')
 os.system('gunzip reference/*.gz')
 print('All reference downloaded successfully')
-
-print('Installing mutserve')
+if not os.path.exists('reference/bwa'):
+    os.mkdir('reference/bwa')
+    shutil.copyfile('reference/Homo_sapiens.GRCh38.dna.chromosome.MT.fa','reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa' )
 if not os.path.exists('./tools'):
     os.mkdir('tools')
+print('installing gatk')
 os.chdir('tools')
+os.system('wget https://github.com/broadinstitute/gatk/releases/download/4.5.0.0/gatk-4.5.0.0.zip')
+os.system('unzip gatk-4.5.0.0.zip')
+
+print('Installing mutserve')
 os.system('curl -sL mutserve.vercel.app | bash')
 
 print('installing minimap2')
@@ -31,10 +38,23 @@ os.chdir('minimap2')
 os.system('make')
 os.chdir('..')
 
+print('installing bwa')
+os.system('git clone https://github.com/lh3/bwa.git')
+os.chdir('bwa')
+os.system('make')
+os.chdir('..')
+
 os.system('wget https://github.com/genepi/haplogrep3/releases/download/v3.2.1/haplogrep3-3.2.1-linux.zip')
 os.system('unzip haplogrep3-3.2.1-linux.zip')
 os.chdir('..')
 
+print('bwa indexing reference')
+os.system('./tools/bwa/bwa index reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
+os.system('samtools faidx reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
+os.system('./tools/gatk-4.5.0.0/gatk CreateSequenceDictionary -R reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
 
-os.system('')
-os.system('pip install ')
+
+
+
+# os.system('')
+# os.system('pip install ')

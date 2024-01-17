@@ -10,6 +10,9 @@ suppressMessages(library(gridExtra))
 resultDir <- file.path("Analysis", "Results")
 dir.create(resultDir, showWarnings = FALSE, recursive = TRUE) 
 
+resultDir1 <- file.path("Results", "QC")
+dir.create(resultDir1, showWarnings = FALSE, recursive = TRUE) 
+
 # Loading the config file----
 config <- yaml::yaml.load_file("config.yaml")
 
