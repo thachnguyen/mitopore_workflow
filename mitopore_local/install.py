@@ -6,6 +6,7 @@ os.system('sudo apt install samtools')
 os.system('sudo apt install bcftools')
 os.system('sudo apt install curl')
 os.system('sudo apt install python3-pip')
+os.system('sudo apt install default-jre')
 os.system('pip install -r requirements.txt')
 
 # download reference 
