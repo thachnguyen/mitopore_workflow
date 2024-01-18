@@ -22,14 +22,14 @@ Mitopore_workflow has two pipelines, user can run one of two command below. Depe
 ##### SNV calling
 ```console
 python mitopore_snv.py testdata_directory_path 
-# for example use "python mitopore_snv.py ../testdata" for our test data
 ```
+E.g. use "python mitopore_snv.py ../testdata" for our test data
 
 ##### INDEL calling (Beta version)
 ```console
 python mitopore_indel.py testdata_directory_path 
-# for example use "python mitopore_indel.py ../testdata" for our test data
 ```
+E.g. use "python mitopore_indel.py ../testdata" for our test data
 ##### Optional parameters
 Running parameters are preset in config.yaml. 
 ##### Results
