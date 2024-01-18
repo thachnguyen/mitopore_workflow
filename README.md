@@ -16,7 +16,8 @@ R packages:
 * yaml
 * gridExtra
 * stringr
-* vcfR<br>
+* vcfR
+
 R Bioconductor:
 * EnsDb.Hsapiens.v86
 * ShortRead
