@@ -10,13 +10,13 @@ python install.py
 ```
 ##### Install R and Bioconductor packages
 Install R version 4.x
-https://docs.posit.co/resources/install-r-source/#specify-r-version
+https://docs.posit.co/resources/install-r-source/#specify-r-version<br>
 R packages:
 * tidyverse
 * yaml
 * gridExtra
 * stringr
-* vcfR
+* vcfR<br>
 R Bioconductor:
 * EnsDb.Hsapiens.v86
 * ShortRead
