@@ -180,7 +180,7 @@ def run_mutserver(path = 'data',organism = 'human', thres = '0.05'):
 def read_indel(path='data'):
     indel_all = pd.DataFrame()
     for sample1 in os.listdir('%s/Analysis/INDEL'%(path)):
-        indel_df = pd.read_csv('%s%s/Analysis/INDEL/%s'%(path, sample1), delimiter='\t')
+        indel_df = pd.read_csv('%s/Analysis/INDEL/%s'%(path, sample1), delimiter='\t')
         indel_df['ID'] = sample1.split('.')[0][6:]
         indel_all = pd.concat([indel_all, indel_df], ignore_index=True, sort=False)
     indel_all.to_html('%s/Analysis/Results/INDEL.html'%path)
