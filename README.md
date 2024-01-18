@@ -25,6 +25,8 @@ python mitopore_snv.py testdata_directory_path
 ```console
 python mitopore_indel.py testdata_directory_path 
 ```
+##### Optional parameters
+Running parameters are preset in config.yaml. 
 ##### Results
 The result is summarized in a single HTML file report.html in your testdata_directory. Other supplementary result files (graphical plots, BAM alignment files, coverage, and mapping reports ...)are in the Results folder and Analysis folder.
 
