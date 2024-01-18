@@ -116,7 +116,6 @@ users_file/
 fail/
 tools/
 results/
-test_data/
 haplogrep3/
 trees/
 migrations
@@ -141,7 +140,7 @@ dmypy.json
 settings.py
 .Rproj.user
 tools/
-test_data/
+# test_data/
 reference/
 results/
 new_chemistry

@@ -12,14 +12,14 @@ python install.py
 Install R version 4.x
 https://docs.posit.co/resources/install-r-source/#specify-r-version
 R packages:
-*tidyverse
-*yaml
-*gridExtra
-*stringr
-*vcfR
+* tidyverse
+* yaml
+* gridExtra
+* stringr
+* vcfR
 R Bioconductor:
-*EnsDb.Hsapiens.v86
-*ShortRead
+* EnsDb.Hsapiens.v86
+* ShortRead
 
 #### Run mitopore_workflow pipeline
 ##### Data Preparation
