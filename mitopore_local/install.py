@@ -27,8 +27,8 @@ if not os.path.exists('./tools'):
     os.mkdir('tools')
 print('installing gatk')
 os.chdir('tools')
-os.system('wget https://github.com/broadinstitute/gatk/releases/download/4.5.0.0/gatk-4.5.0.0.zip')
-os.system('unzip gatk-4.5.0.0.zip')
+os.system('wget https://github.com/broadinstitute/gatk/releases/download/4.3.0.0/gatk-4.3.0.0.zip')
+os.system('unzip gatk-4.3.0.0.zip')
 
 print('Installing mutserve')
 os.system('curl -sL mutserve.vercel.app | bash')
@@ -52,7 +52,7 @@ os.chdir('..')
 print('bwa indexing reference')
 os.system('./tools/bwa/bwa index reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
 os.system('samtools faidx reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
-os.system('./tools/gatk-4.5.0.0/gatk CreateSequenceDictionary -R reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
+os.system('./tools/gatk-4.3.0.0/gatk CreateSequenceDictionary -R reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa')
 
 
 # os.system('')

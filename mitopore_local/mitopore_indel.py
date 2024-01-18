@@ -28,9 +28,15 @@ def main():
     os.system('R < %s/Analysis/RNA.R --no-save'%path1)
     run_haplogrep3(path=path1)
     write_json_cgview(path=path1)
+    write_json_cgview_indel(path=path1)
+
     copy_tree('static/JS_library/', '%s/JS_library/'%path1)
     shutil.copyfile('%s/Analysis/my_cgview.js'%path1, '%s/JS_library/my_cgview.js' %path1)
+    shutil.copyfile('%s/Analysis/my_cgview1.js'%path1, '%s/JS_library/my_cgview1.js' %path1)
     shutil.copyfile('templates/report.html', '%s/report.html'%path1)
+    os.unlink('%s/Analysis/my_cgview.js'%path1)
+    os.unlink('%s/Analysis/my_cgview1.js'%path1)
+    os.unlink('%s/Rplots.pdf'%path1)
 
 if __name__ == "__main__":
     main()

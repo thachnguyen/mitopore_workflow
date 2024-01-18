@@ -4,7 +4,7 @@
 Mitopore_workflow requires python3 and works on Unix liked environment
 Simply install Python3 and run the code below(you may have to run it as a sudo user on Linux):
 ```console
-gitclone git@github.com:thachnguyen/mitopore_workflow.git
+git clone git@github.com:thachnguyen/mitopore_workflow.git
 cd mitopore_workflow/mitopore_local
 python install.py
 ```

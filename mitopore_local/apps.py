@@ -137,8 +137,8 @@ def run_mutect2(path='data', organism = 'human'):
             f1.write(fastq_file1+'.bam\n')
         # This protocol, we all use bwa-mem as aligner 
         os.system('./tools/bwa/bwa mem -K 100000000 -p -v 3 -t 4 -Y reference/bwa/%s %s|samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
-        os.system('./tools/gatk-4.5.0.0/gatk AddOrReplaceReadGroups -I %s/%s.bam -O %s/%s_addedRG.bam --RGID GT19-38445 --RGLB wgs --RGPL illumina --RGPU GT19-38445 --SORT_ORDER coordinate --CREATE_INDEX true --TMP_DIR /tmp/ --RGSM wgs1'%(path_minimap,fastq_file1, path_minimap, fastq_file1))
-        os.system('./tools/gatk-4.5.0.0/gatk Mutect2 -R reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa --mitochondria-mode -I %s/%s_addedRG.bam -O %s/INDEL_%s.vcf'%(path_minimap, fastq_file1, path_minimap,fastq_file1))
+        os.system('./tools/gatk-4.3.0.0/gatk AddOrReplaceReadGroups -I %s/%s.bam -O %s/%s_addedRG.bam --RGID GT19-38445 --RGLB wgs --RGPL illumina --RGPU GT19-38445 --SORT_ORDER coordinate --CREATE_INDEX true --TMP_DIR /tmp/ --RGSM wgs1'%(path_minimap,fastq_file1, path_minimap, fastq_file1))
+        os.system('./tools/gatk-4.3.0.0/gatk Mutect2 -R reference/bwa/Homo_sapiens.GRCh38.dna.chromosome.MT.fa --mitochondria-mode -I %s/%s_addedRG.bam -O %s/INDEL_%s.vcf'%(path_minimap, fastq_file1, path_minimap,fastq_file1))
         os.unlink('%s/%s_addedRG.bam'%(path_minimap, fastq_file1))
         os.unlink('%s/%s_addedRG.bai'%(path_minimap, fastq_file1))
         shutil.copyfile('%s/INDEL_%s.vcf'%(path_minimap,fastq_file1), '%sINDEL_%s.vcf'%(path_mutect,fastq_file1))
@@ -255,16 +255,15 @@ def write_json_cgview(path='data', baseline_cgv = 1000):
         outfile.write(js_str)
     return
 
-def write_json_cgview_indel(path='users_file/', s_id = 'Test_name_1618217069', baseline_cgv = 1000):
+def write_json_cgview_indel(path='data', baseline_cgv = 1000):
     # For json plots
-    
     my_json = json.load(open('static/JS_library/NZ_mito.json'))
     plot_list = []
     track_list = my_json['cgview']['tracks']
     features_list = my_json['cgview']['features']
-    path_depths = 'users_file/%s/Analysis/depths/'%s_id
+    path_depths = '%s/Analysis/depths/'%path
 
-    for fastq_file in os.listdir('users_file/%s/fastq/'%(s_id)):
+    for fastq_file in os.listdir('%s/fastq/'%(path)):
         fastq_file1 = fastq_file.split('.')[0]
         seq_depth = pd.read_csv('%s%s.txt'%(path_depths, fastq_file1), delimiter='\t', header=None)
         seq_depth_list = {}
@@ -293,7 +292,7 @@ def write_json_cgview_indel(path='users_file/', s_id = 'Test_name_1618217069', b
             'dataKeys': '%s'%seq_depth_list['source']}
     
         track_list.append(track1)
-        indel_list = read_indel(path='users_file/', s_id = s_id)
+        indel_list = read_indel(path=path)
         for i1 in range(len(indel_list)):
             feature2 = {'type': 'INDEL',
                         'name': '%s %s>%s %.2f'%(list(indel_list['ID'])[i1], list(indel_list['REF'])[i1], list(indel_list['ALT'])[i1],list(indel_list['AF'])[i1]),
@@ -319,7 +318,7 @@ def write_json_cgview_indel(path='users_file/', s_id = 'Test_name_1618217069', b
     my_json['cgview']['features'] = features_list
     json_str = json.dumps(my_json)
     js_str = 'var NZ_mito1 = %s'%json_str
-    with open('users_file/%s/Analysis/my_cgview1.js'%s_id, 'w') as outfile:
+    with open('%s/Analysis/my_cgview1.js'%path, 'w') as outfile:
         outfile.write(js_str)
 
     return
