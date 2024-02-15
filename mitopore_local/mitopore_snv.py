@@ -5,9 +5,12 @@ import shutil
 from distutils.dir_util import copy_tree
 
 def main():
-    path1 = sys.argv[1]
-    if path1[-1] == '/':
-        path1 = path1[:-1]
+    if len(sys.argv) > 1:
+        path1 = sys.argv[1]
+        if path1[-1] == '/':
+            path1 = path1[:-1]
+    else: 
+        path1 = '/mitopore_data'
     samples = manage_fastq_list(path1)
     create_yaml(path=path1, samples=samples)
     run_minimap2(path=path1)
