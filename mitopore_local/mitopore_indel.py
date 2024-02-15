@@ -5,6 +5,7 @@ import shutil
 from distutils.dir_util import copy_tree
 
 def main():
+    os.chdir('/home/ag-rossi/projects/mitopore_workflow/mitopore_local/')
     if len(sys.argv) > 1:
         path1 = sys.argv[1]
         if path1[-1] == '/':
