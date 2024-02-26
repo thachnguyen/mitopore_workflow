@@ -40,7 +40,9 @@ rCRS <- read_file(paste0(ref_dir,"/reference/rCRS.fasta")) %>%
   str_remove("chrM") %>%
   str_remove(">") %>%
   str_remove_all("\n") %>%
-  str_remove_all("\r")
+  str_remove_all("\r")%>%
+  str_remove_all("\r") |>
+  str_remove("rCRS")
 mitopore_blacklist <- str_locate_all(rCRS, 
                                      "CCCCCC|AAAAAA|TTTTTT|GGGGGG") %>%
   as.data.frame() %>% 
