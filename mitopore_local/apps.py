@@ -70,6 +70,10 @@ def run_minimap2(path='data', organism = 'human', seq_data = 'nanopore'):
     if not os.path.exists(path_minimap):
         os.mkdir(path_minimap)
 
+    path_minimap_shifted = '%s/Analysis/Minimap/shifted'%path
+    if not os.path.exists(path_minimap_shifted):
+        os.mkdir(path_minimap_shifted)
+
     path_flagstat = '%s/Analysis/flagstat/'%path
     if not os.path.exists(path_flagstat):
         os.mkdir(path_flagstat)
@@ -87,14 +91,20 @@ def run_minimap2(path='data', organism = 'human', seq_data = 'nanopore'):
         if seq_data == 'nanopore':
             os.system('tools/minimap2/minimap2 -t 4 -ax map-ont --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
             print('minimap2 -t 4 -ax map-ont --secondary=no *** ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
-        
+            if organism == 'human':
+                os.system('minimap2 -t 4 -ax map-ont --secondary=no /home/ag-rossi/projects/mitopore_workflow/mitopore_local/reference/mtDNA/rCRS_shifted.fasta %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(path2, path_minimap_shifted, fastq_file1))
         
         elif seq_data == 'pacbio':
             os.system('tools/minimap2/minimap2 -t 4 -ax map-pb --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
             print('minimap2 -t 4 -ax map-pb -uf --secondary=no *** ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+            if organism == 'human':
+                os.system('minimap2 -t 4 -ax map-pb -uf --secondary=no /home/ag-rossi/projects/mitopore_workflow/mitopore_local/reference/mtDNA/rCRS_shifted.fasta %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(path2, path_minimap_shifted, fastq_file1))
+
         elif seq_data =='illumina':
             os.system('bwa mem -K 100000000 -p -v 3 -t 4 -Y ./reference/%s %s |samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
             print('bwa mem -K 100000000 -p -v 3 -t 4 -Y ./reference/%s %s |samtools view -Sb|samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+            if organism == 'human':
+                os.system('bwa mem -K 100000000 -p -v 3 -t 4 -Y /home/ag-rossi/projects/mitopore_workflow/mitopore_local/reference/mtDNA/rCRS_shifted.fasta %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(path2, path_minimap_shifted, fastq_file1))        
         else:
             print('sequence method is not listed')
         os.system('samtools flagstat %s/%s.bam>%s%s.txt'%(path_minimap, fastq_file1, path_flagstat, fastq_file1))
@@ -119,6 +129,9 @@ def run_mutect2(path='data', organism = 'human'):
     path_minimap = '%s/Analysis/Minimap'%path
     if not os.path.exists(path_minimap):
         os.mkdir(path_minimap)
+    path_minimap_shifted = '%s/Analysis/Minimap/shifted'%path
+    if not os.path.exists(path_minimap_shifted):
+        os.mkdir(path_minimap_shifted)
 
     path_flagstat = '%s/Analysis/flagstat/'%path
     if not os.path.exists(path_flagstat):
@@ -170,6 +183,29 @@ def run_mutserver(path = 'data',organism = 'human', thres = '0.05'):
     if not os.path.exists('%s/Analysis/Results/'%path):
         os.mkdir('%s/Analysis/Results/'%path)
     os.system('./tools/mutserve call %s/Analysis/Minimap/*.bam --reference reference/%s --output result1.vcf --threads 4 --baseQ 10 --level %s'%(path, file_org[organism], thres))    
+    
+    df1 = pd.read_csv('result1.txt', delimiter='\t')
+    df11 = pd.read_csv('result1.vcf', delimiter='\t', skiprows= 7)
+    if organism=='human':
+        os.system('./tools/mutserve call %s/Analysis/Minimap/shifted/*.bam --reference /home/ag-rossi/projects/mitopore_workflow/mitopore_local/reference/mtDNA/rCRS_shifted.fasta --output result1_shifted.vcf --threads 4 --baseQ 10 --level %s'%(path, thres))    
+        df2 = pd.read_csv('%s/Analysis/Results/result1_shifted.txt'%path, delimiter='\t')
+        df2['Pos'] = df2['Pos'].apply(lambda x: x - 8569 if x > 8569 else x + 8000)
+        df1 = pd.concat([df1, df2])
+        df1 = df1.drop_duplicates()
+        df1.to_csv('result1.txt', sep='\t', index=False)
+
+        df22 = pd.read_csv('result1_shifted.vcf', delimiter='\t', skiprows= 7)
+        df22['POS'] = df22['POS'].apply(lambda x: x - 8569 if x > 8569 else x + 8000)
+        df11 = pd.concat([df11, df22])
+        df11 = df11.drop_duplicates()
+        df11.to_csv('result1.vcf', sep='\t', index=False)
+        header = '##fileformat=VCFv4.2\n##FILTER=<ID=PASS,Description="Variants passed mtDNA-Server">\n##FORMAT=<ID=AF,Number=1,Type=String,Description="Inferred Allele Frequency of top (non-reference) allele">\n##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">\n##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">\n##Mutserve=v2.0.0-rc13\n##contig=<ID=chrM,length=16569>\n'
+        with open('result1.vcf', 'r') as file:
+            existing_content = file.read()
+        new_content = header + existing_content
+        with open('result1.vcf'%path, 'w') as file:
+            file.write(new_content)
+
     os.system('mv result1.vcf %s/Analysis/Results/'%path)
     os.system('mv result1.txt %s/Analysis/Results/'%path)
 
