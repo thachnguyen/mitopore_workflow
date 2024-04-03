@@ -87,6 +87,8 @@ def run_minimap2(path='data', organism = 'human', seq_data = 'nanopore'):
         if seq_data == 'nanopore':
             os.system('tools/minimap2/minimap2 -t 4 -ax map-ont --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
             print('minimap2 -t 4 -ax map-ont --secondary=no *** ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
+        
+        
         elif seq_data == 'pacbio':
             os.system('tools/minimap2/minimap2 -t 4 -ax map-pb --secondary=no ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
             print('minimap2 -t 4 -ax map-pb -uf --secondary=no *** ./reference/%s %s | samtools view -Sb | samtools sort - -o %s/%s.bam'%(file_org[organism], path2, path_minimap, fastq_file1))
