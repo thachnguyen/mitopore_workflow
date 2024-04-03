@@ -203,7 +203,7 @@ def run_mutserver(path = 'data',organism = 'human', thres = '0.05'):
         with open('result1.vcf', 'r') as file:
             existing_content = file.read()
         new_content = header + existing_content
-        with open('result1.vcf'%path, 'w') as file:
+        with open('result1.vcf', 'w') as file:
             file.write(new_content)
 
     os.system('mv result1.vcf %s/Analysis/Results/'%path)
