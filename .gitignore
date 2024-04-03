@@ -141,6 +141,5 @@ settings.py
 .Rproj.user
 tools/
 # test_data/
-reference/
 results/
 new_chemistry
