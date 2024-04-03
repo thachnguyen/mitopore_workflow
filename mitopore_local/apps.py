@@ -188,7 +188,7 @@ def run_mutserver(path = 'data',organism = 'human', thres = '0.05'):
     df11 = pd.read_csv('result1.vcf', delimiter='\t', skiprows= 7)
     if organism=='human':
         os.system('./tools/mutserve call %s/Analysis/Minimap/shifted/*.bam --reference /home/ag-rossi/projects/mitopore_workflow/mitopore_local/reference/mtDNA/rCRS_shifted.fasta --output result1_shifted.vcf --threads 4 --baseQ 10 --level %s'%(path, thres))    
-        df2 = pd.read_csv('%s/Analysis/Results/result1_shifted.txt'%path, delimiter='\t')
+        df2 = pd.read_csv('result1_shifted.txt', delimiter='\t')
         df2['Pos'] = df2['Pos'].apply(lambda x: x - 8569 if x > 8569 else x + 8000)
         df1 = pd.concat([df1, df2])
         df1 = df1.drop_duplicates()
@@ -208,6 +208,8 @@ def run_mutserver(path = 'data',organism = 'human', thres = '0.05'):
 
     os.system('mv result1.vcf %s/Analysis/Results/'%path)
     os.system('mv result1.txt %s/Analysis/Results/'%path)
+    os.system('mv result1_shifted.vcf %s/Analysis/Results/'%path)
+    os.system('mv result1_shifted.txt %s/Analysis/Results/'%path)
 
     os.system('bcftools view -S %s/Analysis/sample.txt %s/Analysis/Results/result1.vcf > %s/Analysis/Results/final_output_2percent.vcf --force-samples'%(path,path,path))
     df = pd.read_csv('%s/Analysis/Results/final_output_2percent.vcf'%path, delimiter='\t', skiprows=11)
