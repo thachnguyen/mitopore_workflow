@@ -46,7 +46,7 @@ docker run -v /test_data_absolute_path/on/your_machine:/mitopore_data/ -i thachd
 ##### INDEL calling (ILLUMINA DATA)
 When you use Illumina data, preprocessing is not required so please use this command with Illumina flag
 ```console
-docker run -v /test_data_absolute_path/on/your_machine:/mitopore_data/ -i thachdt4/mitopore_local:latest python /home/ag-rossi/projects/mitopore_workflow/mitopore_local/mitopore_indel.py /home/ag-rossi/projects/mitopore_workflow/test_data/ illumina
+docker run -v /test_data_absolute_path/on/your_machine:/mitopore_data/ -i thachdt4/mitopore_local:latest python /home/ag-rossi/projects/mitopore_workflow/mitopore_local/mitopore_indel.py /mitopore_data/ illumina
 
 you have to change the /test_data_absolute_path/on/your_machine to the path where you store the data 
 ##### Optional parameters
