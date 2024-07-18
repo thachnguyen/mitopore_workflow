@@ -24,6 +24,8 @@ def main():
                     print('converting fastq using Elibq')
                 else:
                     print('Ilumina')
+                    shutil.copytree('%s/fastq/'%path1, '%s/fastq_fil/'%path1)
+                    
             else:
                     convert_fastq(fastqfile='%s/fastq/%s'%(path1, files), outfile='%s/fastq_fil/%s'%(path1, files))
                     print('converting fastq using Elibq')
