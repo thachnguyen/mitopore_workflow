@@ -25,6 +25,9 @@ def main():
                     print('converting fastq using Elibq')
                 else:
                     print('Ilumina')
+                    if os.path.exists('%s/fastq_fil/'%path1):
+                        # Remove the destination directory
+                        shutil.rmtree('%s/fastq_fil/'%path1)
                     shutil.copytree('%s/fastq/'%path1, '%s/fastq_fil/'%path1)
                     
             else:
