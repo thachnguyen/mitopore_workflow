@@ -18,8 +18,15 @@ def main():
         os.mkdir('%s/fastq_fil/'%path1)
     for files in os.listdir('%s/fastq/'%path1):
         if 'fastq' == files[-5:]:
-            convert_fastq(fastqfile='%s/fastq/%s'%(path1, files), outfile='%s/fastq_fil/%s'%(path1, files))
-            print('converting fastq using Elibq')
+            if len(sys.argv) > 2:
+                if sys.argv[2]!='illumina':
+                    convert_fastq(fastqfile='%s/fastq/%s'%(path1, files), outfile='%s/fastq_fil/%s'%(path1, files))
+                    print('converting fastq using Elibq')
+                else:
+                    print('Ilumina')
+            else:
+                    convert_fastq(fastqfile='%s/fastq/%s'%(path1, files), outfile='%s/fastq_fil/%s'%(path1, files))
+                    print('converting fastq using Elibq')
         else:
             print('Indel pipeline use fastq files only')
     run_mutect2(path=path1)

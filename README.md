@@ -43,6 +43,11 @@ you have to change the /test_data_absolute_path/on/your_machine to the path wher
 ```console
 docker run -v /test_data_absolute_path/on/your_machine:/mitopore_data/ -i thachdt4/mitopore_local:latest python /home/ag-rossi/projects/mitopore_workflow/mitopore_local/mitopore_indel.py 
 ```
+##### INDEL calling (ILLUMINA DATA)
+When you use Illumina data, preprocessing is not required so please use this command with Illumina flag
+```console
+docker run -v /test_data_absolute_path/on/your_machine:/mitopore_data/ -i thachdt4/mitopore_local:latest python /home/ag-rossi/projects/mitopore_workflow/mitopore_local/mitopore_indel.py illumina
+
 you have to change the /test_data_absolute_path/on/your_machine to the path where you store the data 
 ##### Optional parameters
 Running parameters are preset in config.yaml. 
@@ -59,6 +64,15 @@ E.g. use "python mitopore_snv.py ../testdata" for our test data
 python mitopore_indel.py testdata_directory_path 
 ```
 E.g. use "python mitopore_indel.py ../testdata" for our test data
+
+##### INDEL calling (ILLUMINA DATA)
+When you use Illumina data, preprocessing is not required so please use this command with Illumina flag
+```console
+python mitopore_snv.py testdata_directory_path illumina
+```
+mitopore_indel.py illumina
+E.g. use "python mitopore_indel.py ../testdata illumina" for our test data
+
 ##### Optional parameters
 Running parameters are preset in config.yaml. 
 ##### Results
