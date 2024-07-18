@@ -14,12 +14,13 @@ def main():
         path1 = '/mitopore_data'
     samples = manage_fastq_list(path1)
     create_yaml(path=path1, samples=samples)
-    if not os.path.exists('%s/fastq_fil/'%path1):
-        os.mkdir('%s/fastq_fil/'%path1)
+
     for files in os.listdir('%s/fastq/'%path1):
         if 'fastq' == files[-5:]:
             if len(sys.argv) > 2:
                 if sys.argv[2]!='illumina':
+                    if not os.path.exists('%s/fastq_fil/'%path1):
+                        os.mkdir('%s/fastq_fil/'%path1)
                     convert_fastq(fastqfile='%s/fastq/%s'%(path1, files), outfile='%s/fastq_fil/%s'%(path1, files))
                     print('converting fastq using Elibq')
                 else:
@@ -27,6 +28,8 @@ def main():
                     shutil.copytree('%s/fastq/'%path1, '%s/fastq_fil/'%path1)
                     
             else:
+                    if not os.path.exists('%s/fastq_fil/'%path1):
+                        os.mkdir('%s/fastq_fil/'%path1)
                     convert_fastq(fastqfile='%s/fastq/%s'%(path1, files), outfile='%s/fastq_fil/%s'%(path1, files))
                     print('converting fastq using Elibq')
         else:
